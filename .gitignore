@@ -1,0 +1,16 @@
+# .NET
+Backend/bin/
+Backend/obj/
+*.user
+
+# SQLite runtime data (recreate via EF Migrations)
+Backend/personas.db
+Backend/personas.db-shm
+Backend/personas.db-wal
+
+# Editor / OS
+.vs/
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
