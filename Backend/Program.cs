@@ -10,12 +10,20 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<PersonasDbContext>(options => options.UseSqlite("Data Source=personas.db"));
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 //Middleware
 app.UseExceptionHandler();
 app.UseCors();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 //Routes
 app.MapControllers();
