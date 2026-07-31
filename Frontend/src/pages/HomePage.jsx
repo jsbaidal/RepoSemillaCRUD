@@ -14,7 +14,7 @@ const HomePage = () => {
       setCargando(true);
       try {
         const respuesta = await api.get("/");
-        setListaPersonas(respuesta.data.listaData ?? []);
+        setListaPersonas(respuesta.data ?? []);
       } catch (error) {
         console.error("Error trayendo personas", error);
         toast.error("No se pudieron cargar las personas");

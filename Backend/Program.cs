@@ -9,10 +9,12 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<PersonasDbContext>(options => options.UseSqlite("Data Source=personas.db"));
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
 //Middleware
+app.UseExceptionHandler();
 app.UseCors();
 
 //Routes
