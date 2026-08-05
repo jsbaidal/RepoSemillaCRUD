@@ -1,12 +1,17 @@
 # .NET
 Backend/bin/
 Backend/obj/
+Backend2/bin/
+Backend2/obj/
 *.user
 
 # SQLite runtime data (recreate via EF Migrations)
 Backend/personas.db
 Backend/personas.db-shm
 Backend/personas.db-wal
+
+# Secrets (connection strings con contraseñas reales)
+**/appsettings.Development.json
 
 # Editor / OS
 .vs/
