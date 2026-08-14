@@ -1,7 +1,6 @@
-import { Link } from "react-router";
 import { PlusIcon } from "lucide-react";
 
-const Navbar = () => {
+const Navbar = ({ alCrear }) => {
   return (
     <header className="bg-base-300 border-b border-base-content/10">
       <div className="mx-auto max-w-6xl p-4">
@@ -9,15 +8,14 @@ const Navbar = () => {
           <h1 className="text-3xl font-bold text-primary font-mono tracking-tight">
             App web de personas
           </h1>
-          <div className="flex items-center gap-4">
-            <Link to={"/crearPersona"} className="btn btn-primary">
-              <PlusIcon className="size-5" />
-              <span>Nueva Persona</span>
-            </Link>
-          </div>
+          <button className="btn btn-primary" onClick={alCrear}>
+            <PlusIcon className="size-5" />
+            <span>Nueva Persona</span>
+          </button>
         </div>
       </div>
     </header>
   );
 };
+
 export default Navbar;

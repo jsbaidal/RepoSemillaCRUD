@@ -4,73 +4,73 @@ using Backend2.Models;
 
 namespace Backend2.Repositorios;
 
-public class RepositorioPersonas(PersonasDb2Context db, ILogger<RepositorioPersonas> logger) : IRepositorioPersonas
+public class RepositorioPersonas
 {
-    public async Task<(List<Persona> Personas, int Total)> ObtenerPaginadoAsync(int pagina, int tamanoPagina)
+    private readonly PersonasDbContext _db;
+
+    public RepositorioPersonas(PersonasDbContext db)
     {
-        var total = await db.Personas.CountAsync();
+        _db = db;
+    }
+
+        public async Task<(List<Persona> Personas, int Total)> ObtenerPaginaAsync(int pagina, int tamanoPagina)
+    {
+        var total = await _db.Personas.CountAsync();
 
         var desde = (pagina - 1) * tamanoPagina + 1;
         var hasta = pagina * tamanoPagina;
 
-        // El proveedor de EF Core para DB2 no traduce Skip() a OFFSET: genera solo "FETCH FIRST N ROWS ONLY"
-        // e ignora el Skip en silencio (page=2 devolvía lo mismo que page=1). ROW_NUMBER() es el workaround
-        // nativo de DB2 para paginar por rango sin depender de esa traducción rota.
-        var personas = await db.Personas
+        var personas = await _db.Personas
             .FromSqlInterpolated($@"
                 SELECT IDPERSONA, TIPOIDENTIFICACION, NUMEROIDENTIFICACION, NOMBRES, APELLIDOS, EMAIL, TELEFONOCONTACTO
                 FROM (
-                    SELECT t.*, ROW_NUMBER() OVER (ORDER BY t.IDPERSONA) AS RN
+                    SELECT t.*, ROW_NUMBER() OVER (ORDER BY t.IDPERSONA DESC) AS RN
                     FROM ESPOL.TBL_PERSONA t
                 ) AS Paginado
                 WHERE RN BETWEEN {desde} AND {hasta}
-                ORDER BY IDPERSONA")
+                ORDER BY IDPERSONA DESC")
             .AsNoTracking()
             .ToListAsync();
 
         return (personas, total);
     }
 
-    public Task<Persona?> ObtenerPorIdAsync(int id) =>
-        db.Personas.FindAsync(id).AsTask();
-
-    public async Task<Persona> CrearAsync(CamposPersona datos)
+    public async Task<Persona?> ObtenerPorIdAsync(int id)
     {
-        var persona = new Persona();
-        datos.AplicarA(persona);
+        return await _db.Personas.FindAsync(id);
+    }
 
-        db.Personas.Add(persona);
-        await db.SaveChangesAsync();
-
-        logger.LogInformation("Persona creada: Id={Id}, Numeroidentificacion={Numeroidentificacion}",
-            persona.Id, persona.Numeroidentificacion);
-
+    public async Task<Persona> CrearAsync(Persona persona)
+    {
+        _db.Personas.Add(persona);
+        await _db.SaveChangesAsync();
         return persona;
     }
 
-    public async Task<Persona?> ActualizarAsync(int id, CamposPersona datos)
+    public async Task<Persona?> ActualizarAsync(int id, Persona datos)
     {
-        var persona = await db.Personas.FindAsync(id);
+        var persona = await _db.Personas.FindAsync(id);
         if (persona is null) return null;
 
-        datos.AplicarA(persona);
-        await db.SaveChangesAsync();
+        persona.TipoIdentificacion = datos.TipoIdentificacion;
+        persona.NumeroIdentificacion = datos.NumeroIdentificacion;
+        persona.Nombres = datos.Nombres;
+        persona.Apellidos = datos.Apellidos;
+        persona.Email = datos.Email;
+        persona.Telefono = datos.Telefono;
 
-        logger.LogInformation("Persona actualizada: Id={Id}", id);
-
+        await _db.SaveChangesAsync();
         return persona;
     }
 
+    // #5 - Eliminar una persona por su id. Devuelve true si se borró, false si no existía.
     public async Task<bool> EliminarAsync(int id)
     {
-        var persona = await db.Personas.FindAsync(id);
+        var persona = await _db.Personas.FindAsync(id);
         if (persona is null) return false;
 
-        db.Personas.Remove(persona);
-        await db.SaveChangesAsync();
-
-        logger.LogInformation("Persona eliminada: Id={Id}", id);
-
+        _db.Personas.Remove(persona);
+        await _db.SaveChangesAsync();
         return true;
     }
 }

@@ -3,18 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend2.Models;
 
-[Table("TBL_PERSONA", Schema = "ESPOL")]
+[Table("TBL_PERSONA",Schema ="ESPOL")]
 public class Persona
 {
+    
     [Key]
     [Column("IDPERSONA")]
     public int Id { get; set; }
 
     [Column("TIPOIDENTIFICACION", TypeName = "character(3)")]
-    public string Tipoidentificacion { get; set; } = string.Empty;
+    public string TipoIdentificacion { get; set; } = "CED";
 
     [Column("NUMEROIDENTIFICACION")]
-    public string Numeroidentificacion { get; set; } = string.Empty;
+    public string NumeroIdentificacion { get; set; } = string.Empty;
 
     [Column("NOMBRES")]
     public string? Nombres { get; set; }
@@ -26,5 +27,5 @@ public class Persona
     public string? Email { get; set; }
 
     [Column("TELEFONOCONTACTO")]
-    public string? Telefonocontacto { get; set; }
+    public string? Telefono { get; set; }
 }
