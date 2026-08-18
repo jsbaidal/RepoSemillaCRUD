@@ -1,55 +1,125 @@
+import { useState } from "react";
 import Navbar from "../components/Navbar";
-import TarjetaPersona from "../components/TarjetaPersona";
-import PersonaNoEncontrada from "../components/PersonaNoEncontrada";
-import api from "../lib/axios";
-import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+import Modal from "../components/Modal";
+import Pagination from "../components/Pagination";
+import PersonaCard from "../features/personas/PersonaCard";
+import PersonaForm from "../features/personas/PersonaForm";
+import { usePersonas } from "../features/personas/usePersonas";
+
+const VACIO = {
+  numeroIdentificacion: "",
+  nombres: "",
+  apellidos: "",
+  email: "",
+  telefono: "",
+};
 
 const HomePage = () => {
-  const [cargando, setCargando] = useState(false);
-  const [listaPersonas, setListaPersonas] = useState([]);
+  const {
+    personas,
+    total,
+    pagina,
+    tamanoPagina,
+    cargando,
+    crear,
+    editar,
+    eliminar,
+    irASiguiente,
+    irAAnterior,
+  } = usePersonas();
 
-  useEffect(() => {
-    const traerPersonas = async () => {
-      setCargando(true);
-      try {
-        const respuesta = await api.get("/");
-        setListaPersonas(respuesta.data ?? []);
-      } catch (error) {
-        console.error("Error trayendo personas", error);
-        toast.error("No se pudieron cargar las personas");
-      } finally {
-        setCargando(false);
+  const [modalAbierto, setModalAbierto] = useState(null);
+  const [valores, setValores] = useState(VACIO);
+  const [guardando, setGuardando] = useState(false);
+
+  const abrirCrear = () => {
+    setValores(VACIO);
+    setModalAbierto("crear");
+  };
+
+  const abrirEditar = (persona) => {
+    setValores({
+      numeroIdentificacion: persona.numeroIdentificacion ?? "",
+      nombres: persona.nombres ?? "",
+      apellidos: persona.apellidos ?? "",
+      email: persona.email ?? "",
+      telefono: persona.telefono ?? "",
+    });
+    setModalAbierto(persona.id);
+  };
+
+  const cerrarModal = () => setModalAbierto(null);
+
+  const cambiarValor = (campo, valor) => {
+    setValores((prev) => ({ ...prev, [campo]: valor }));
+  };
+
+  const enviar = async (e) => {
+    e.preventDefault();
+    setGuardando(true);
+    try {
+      const datos = { ...valores, tipoIdentificacion: "CED" };
+      if (modalAbierto === "crear") {
+        await crear(datos);
+      } else {
+        await editar(modalAbierto, datos);
       }
-    };
+      cerrarModal();
+    } catch {
+    } finally {
+      setGuardando(false);
+    }
+  };
 
-    traerPersonas();
-  }, []);
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar alCrear={abrirCrear} />
 
       <div className="max-w-7xl mx-auto p-4 mt-6">
         {cargando && (
-          <div className="text-center text-primary py-10 ">
-            Cargado personas..
+          <div className="text-center text-primary py-10">Cargando personas...</div>
+        )}
+
+        {!cargando && personas.length === 0 && (
+          <div className="text-center text-base-content/60 py-16">
+            Sin personas registradas
           </div>
         )}
-        {!cargando && listaPersonas.length === 0 && <PersonaNoEncontrada />}
-        {listaPersonas.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
-            {listaPersonas.map((persona) => (
-              <TarjetaPersona
-                key={persona.id}
-                persona={persona}
-                onDelete={(id) =>
-                  setListaPersonas((prev) => prev.filter((p) => p.id !== id))
-                }
-              />
-            ))}
-          </div>
+
+        {personas.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {personas.map((persona) => (
+                <PersonaCard
+                  key={persona.id}
+                  persona={persona}
+                  onEditar={abrirEditar}
+                  onEliminar={eliminar}
+                />
+              ))}
+            </div>
+            <Pagination
+              pagina={pagina}
+              total={total}
+              tamanoPagina={tamanoPagina}
+              alAnterior={irAAnterior}
+              alSiguiente={irASiguiente}
+            />
+          </>
         )}
       </div>
+
+      <Modal abierto={modalAbierto !== null} alCerrar={cerrarModal}>
+        <h3 className="text-lg font-bold mb-4">
+          {modalAbierto === "crear" ? "Nueva persona" : "Editar persona"}
+        </h3>
+        <form onSubmit={enviar} className="space-y-4">
+          <PersonaForm valores={valores} onCambiar={cambiarValor} />
+          <button type="submit" className="btn btn-primary w-full" disabled={guardando}>
+            {guardando ? "Guardando..." : "Guardar"}
+          </button>
+        </form>
+      </Modal>
     </div>
   );
 };

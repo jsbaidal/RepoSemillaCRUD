@@ -1,45 +1,75 @@
 using Microsoft.EntityFrameworkCore;
-using PersonasAPI.Data;
-using PersonasAPI.Models;
+using Backend2.Data;
+using Backend2.Models;
 
-namespace PersonasAPI.Repositorios;
+namespace Backend2.Repositorios;
 
-public static class RepositorioPersonas
+public class RepositorioPersonas
 {
-    public static Task<List<Persona>> ObtenerTodasAsync(PersonasDbContext db) =>
-        db.Personas.AsNoTracking().ToListAsync();
+    private readonly PersonasDbContext _db;
 
-    public static Task<Persona?> ObtenerPorIdAsync(PersonasDbContext db, int id) =>
-        db.Personas.FindAsync(id).AsTask();
-
-    public static async Task<Persona> CrearAsync(PersonasDbContext db, CamposPersona datos)
+    public RepositorioPersonas(PersonasDbContext db)
     {
-        var persona = new Persona { Nombre = datos.Nombre, Correo = datos.Correo, Telefono = datos.Telefono };
-        db.Personas.Add(persona);
-        await db.SaveChangesAsync();
+        _db = db;
+    }
+
+        public async Task<(List<Persona> Personas, int Total)> ObtenerPaginaAsync(int pagina, int tamanoPagina)
+    {
+        var total = await _db.Personas.CountAsync();
+
+        var desde = (pagina - 1) * tamanoPagina + 1;
+        var hasta = pagina * tamanoPagina;
+
+        var personas = await _db.Personas
+            .FromSqlInterpolated($@"
+                SELECT IDPERSONA, TIPOIDENTIFICACION, NUMEROIDENTIFICACION, NOMBRES, APELLIDOS, EMAIL, TELEFONOCONTACTO
+                FROM (
+                    SELECT t.*, ROW_NUMBER() OVER (ORDER BY t.IDPERSONA DESC) AS RN
+                    FROM ESPOL.TBL_PERSONA t
+                ) AS Paginado
+                WHERE RN BETWEEN {desde} AND {hasta}
+                ORDER BY IDPERSONA DESC")
+            .AsNoTracking()
+            .ToListAsync();
+
+        return (personas, total);
+    }
+
+    public async Task<Persona?> ObtenerPorIdAsync(int id)
+    {
+        return await _db.Personas.FindAsync(id);
+    }
+
+    public async Task<Persona> CrearAsync(Persona persona)
+    {
+        _db.Personas.Add(persona);
+        await _db.SaveChangesAsync();
         return persona;
     }
 
-    public static async Task<Persona?> ActualizarAsync(PersonasDbContext db, int id, CamposPersona datos)
+    public async Task<Persona?> ActualizarAsync(int id, Persona datos)
     {
-        var persona = await db.Personas.FindAsync(id);
+        var persona = await _db.Personas.FindAsync(id);
         if (persona is null) return null;
 
-        persona.Nombre = datos.Nombre;
-        persona.Correo = datos.Correo;
+        persona.TipoIdentificacion = datos.TipoIdentificacion;
+        persona.NumeroIdentificacion = datos.NumeroIdentificacion;
+        persona.Nombres = datos.Nombres;
+        persona.Apellidos = datos.Apellidos;
+        persona.Email = datos.Email;
         persona.Telefono = datos.Telefono;
 
-        await db.SaveChangesAsync();
+        await _db.SaveChangesAsync();
         return persona;
     }
 
-    public static async Task<bool> EliminarAsync(PersonasDbContext db, int id)
+    public async Task<bool> EliminarAsync(int id)
     {
-        var persona = await db.Personas.FindAsync(id);
+        var persona = await _db.Personas.FindAsync(id);
         if (persona is null) return false;
 
-        db.Personas.Remove(persona);
-        await db.SaveChangesAsync();
+        _db.Personas.Remove(persona);
+        await _db.SaveChangesAsync();
         return true;
     }
 }

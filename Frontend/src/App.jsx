@@ -1,16 +1,11 @@
-import { Route, Routes } from "react-router";
+import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/HomePage";
-import CrearPersonaPage from "./pages/CrearPersonaPage";
-import DetallePersonaPage from "./pages/DetallePersonaPage";
 
-function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/detallePersona/:id" element={<DetallePersonaPage />} />
-      <Route path="/crearPersona" element={<CrearPersonaPage />} />
-    </Routes>
-  );
-}
+const App = () => (
+  <>
+    <HomePage />
+    <Toaster position="top-center" />
+  </>
+);
 
 export default App;

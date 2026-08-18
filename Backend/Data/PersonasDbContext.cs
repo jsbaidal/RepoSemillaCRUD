@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using PersonasAPI.Models;
+using Backend2.Models;
 
-namespace PersonasAPI.Data;
+namespace Backend2.Data;
 
 public class PersonasDbContext : DbContext
 {
+    //Constructor
     public PersonasDbContext(DbContextOptions<PersonasDbContext> options) : base(options) { }
 
     public DbSet<Persona> Personas => Set<Persona>();
