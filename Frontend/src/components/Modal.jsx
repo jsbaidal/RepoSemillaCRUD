@@ -13,7 +13,7 @@ const Modal = ({ abierto, alCerrar, children }) => {
 
   return (
     <dialog ref={dialogRef} className="modal" onClose={alCerrar}>
-      <div className="modal-box">
+      <div className="modal-box max-h-[90vh] overflow-y-auto border border-base-300 shadow-xl">
         <button
           type="button"
           className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -31,4 +31,3 @@ const Modal = ({ abierto, alCerrar, children }) => {
 };
 
 export default Modal;
-

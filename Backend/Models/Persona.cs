@@ -28,4 +28,7 @@ public class Persona
 
     [Column("TELEFONOCONTACTO")]
     public string? Telefono { get; set; }
+
+    [Column("ESTADO", TypeName = "character(1)")]
+    public string Estado { get; set; } = "A";
 }

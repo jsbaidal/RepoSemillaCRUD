@@ -29,7 +29,9 @@ public class PersonasController : ControllerBase
             Total = total,
             Pagina = pagina,
             TamanoPagina = tamanoPagina,
-            Personas = personas.Select(PersonaRespuesta.Mapear).ToList()
+            Personas = personas
+                .Select(persona => PersonaRespuesta.Mapear(persona))
+                .ToList()
         });
     }
 
@@ -39,27 +41,72 @@ public class PersonasController : ControllerBase
         var persona = await _repositorio.ObtenerPorIdAsync(id);
         if (persona is null) return NotFound();
 
-        return Ok(PersonaRespuesta.Mapear(persona));
+        var domicilio = await _repositorio.ObtenerDomicilioAsync(id);
+
+        return Ok(PersonaRespuesta.Mapear(persona, domicilio));
     }
 
     [HttpPost]
-    public async Task<IActionResult> CrearPersona(CamposPersona datos)
+    public async Task<IActionResult> CrearPersona(DatosPersona datos)
     {
-        var persona = new Persona();
-        datos.CopiarA(persona);
+        if (await _repositorio.IdentificacionExisteAsync(
+            datos.NumeroIdentificacion))
+        {
+            return Conflict(new
+            {
+                detail = "Ya existe una persona con esa cédula o RUC"
+            });
+        }
 
-        var creada = await _repositorio.CrearAsync(persona);
+        var persona = datos.CrearPersona();
+        var domicilio = datos.CrearDomicilio();
+
+        domicilio.Persona = persona;
+
+        var creada = await _repositorio.CrearAsync(persona, domicilio);
+
+        if (creada is null)
+        {
+            return BadRequest(new
+            {
+                detail = "El país, la provincia y el cantón seleccionados no corresponden entre sí"
+            });
+        }
 
         return CreatedAtAction(nameof(ObtenerPersonaPorId), new { id = creada.Id }, PersonaRespuesta.Mapear(creada));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> ActualizarPersona(int id, CamposPersona datos)
+    public async Task<IActionResult> ActualizarPersona(int id, DatosPersona datos)
     {
-        var persona = new Persona();
-        datos.CopiarA(persona);
+        if (await _repositorio.IdentificacionExisteAsync(
+            datos.NumeroIdentificacion,
+            id))
+        {
+            return Conflict(new
+            {
+                detail = "Ya existe otra persona con esa cédula o RUC"
+            });
+        }
 
-        var actualizada = await _repositorio.ActualizarAsync(id, persona);
+        if (!await _repositorio.UbicacionValidaAsync(
+            datos.PaisId,
+            datos.ProvinciaId,
+            datos.CantonId))
+        {
+            return BadRequest(new
+            {
+                detail = "El país, la provincia y el cantón seleccionados no corresponden entre sí"
+            });
+        }
+
+        var persona = datos.CrearPersona();
+        var domicilio = datos.CrearDomicilio();
+
+        var actualizada = await _repositorio.ActualizarAsync(
+            id,
+            persona,
+            domicilio);
         if (actualizada is null) return NotFound();
 
         return Ok(PersonaRespuesta.Mapear(actualizada));

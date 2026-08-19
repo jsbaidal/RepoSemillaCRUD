@@ -3,7 +3,7 @@ const Pagination = ({ pagina, total, tamanoPagina, alAnterior, alSiguiente }) =>
 
   return (
     <div className="flex items-center justify-center gap-4 mt-8">
-      <button className="btn btn-outline btn-sm" onClick={alAnterior} disabled={pagina <= 1}>
+      <button className="btn btn-outline btn-primary btn-sm" onClick={alAnterior} disabled={pagina <= 1}>
         ◀ Anterior
       </button>
 
@@ -12,7 +12,7 @@ const Pagination = ({ pagina, total, tamanoPagina, alAnterior, alSiguiente }) =>
       </span>
 
       <button
-        className="btn btn-outline btn-sm"
+        className="btn btn-outline btn-primary btn-sm"
         onClick={alSiguiente}
         disabled={pagina >= totalPaginas}
       >

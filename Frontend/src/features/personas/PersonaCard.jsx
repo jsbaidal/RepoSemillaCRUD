@@ -7,7 +7,7 @@ const PersonaCard = ({ persona, onEditar, onEliminar }) => {
   };
 
   return (
-    <div className="card bg-base-100 hover:shadow-lg transition-all duration-200 border-t-4 border-solid border-[#00FF9D]">
+    <div className="card bg-base-100 border border-base-300 border-t-4 border-t-primary shadow-sm hover:shadow-md transition-shadow duration-200">
       <div className="card-body">
         <div className="flex items-start justify-between gap-2">
           <h3 className="card-title text-base-content">

@@ -7,6 +7,11 @@ export async function listarPersonas(pagina, tamanoPagina) {
   return respuesta.data;
 }
 
+export async function obtenerPersona(id) {
+  const respuesta = await api.get(`/personas/${id}`);
+  return respuesta.data;
+}
+
 export async function crearPersona(datos) {
   const respuesta = await api.post("/personas", datos);
   return respuesta.data;

@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { listarPersonas, crearPersona, editarPersona, eliminarPersona } from "./personasApi";
+import {
+  listarPersonas,
+  obtenerPersona,
+  crearPersona,
+  editarPersona,
+  eliminarPersona,
+} from "./personasApi";
 
 const TAMANO_PAGINA = 12;
 
@@ -37,14 +43,24 @@ export function usePersonas() {
     cargar(1);
   }, []);
 
+  const obtener = async (id) => {
+    try {
+      return await obtenerPersona(id);
+    } catch (error) {
+      toast.error(mensajeDeError(error, "No se pudo cargar la persona"));
+      throw error;
+    }
+  };
+
   const crear = async (datos) => {
     try {
       await crearPersona(datos);
       toast.success("Persona creada");
       await cargar(1);
     } catch (error) {
-      toast.error(mensajeDeError(error, "No se pudo crear la persona"));
-      throw error;
+      throw new Error(
+        mensajeDeError(error, "No se pudo crear la persona"),
+      );
     }
   };
 
@@ -54,8 +70,9 @@ export function usePersonas() {
       toast.success("Persona actualizada");
       await cargar(pagina);
     } catch (error) {
-      toast.error(mensajeDeError(error, "No se pudo actualizar la persona"));
-      throw error;
+      throw new Error(
+        mensajeDeError(error, "No se pudo actualizar la persona"),
+      );
     }
   };
 
@@ -78,6 +95,7 @@ export function usePersonas() {
     pagina,
     tamanoPagina: TAMANO_PAGINA,
     cargando,
+    obtener,
     crear,
     editar,
     eliminar,

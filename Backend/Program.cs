@@ -22,6 +22,7 @@ builder.Services.AddDbContext<PersonasDbContext>(options =>
     options.UseDb2(connectionString, db2 => db2.SetServerInfo(IBMDBServerType.LUW)));
 
 builder.Services.AddScoped<RepositorioPersonas>();
+builder.Services.AddScoped<RepositorioUbicaciones>();
 
 var app = builder.Build();
 

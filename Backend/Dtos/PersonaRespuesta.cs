@@ -11,8 +11,14 @@ public class PersonaRespuesta
     public string? Apellidos { get; set; }
     public string? Email { get; set; }
     public string? Telefono { get; set; }
+    public short? PaisId { get; set; }
+    public short? ProvinciaId { get; set; }
+    public int? CantonId { get; set; }
+    public string? Direccion { get; set; }
 
-    public static PersonaRespuesta Mapear(Persona persona) => new()
+    public static PersonaRespuesta Mapear(
+        Persona persona,
+        LugarDomicilio? domicilio = null) => new()
     {
         Id = persona.Id,
         TipoIdentificacion = persona.TipoIdentificacion,
@@ -21,5 +27,9 @@ public class PersonaRespuesta
         Apellidos = persona.Apellidos,
         Email = persona.Email,
         Telefono = persona.Telefono,
+        PaisId = domicilio?.PaisId,
+        ProvinciaId = domicilio?.ProvinciaId,
+        CantonId = domicilio?.CantonId,
+        Direccion = domicilio?.Direccion,
     };
 }
