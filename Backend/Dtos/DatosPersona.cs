@@ -5,6 +5,8 @@ namespace Backend2.Dtos;
 
 public class DatosPersona
 {
+    // Identificación
+
     [Required(ErrorMessage = "El tipo de identificación es obligatorio")]
     [RegularExpression(@"^(CED|RUC)$", ErrorMessage = "El tipo de identificación debe ser CED o RUC")]
     public string TipoIdentificacion { get; set; } = string.Empty;
@@ -12,6 +14,8 @@ public class DatosPersona
     [Required(ErrorMessage = "El número de identificación es obligatorio")]
     [RegularExpression(@"^(\d{10}|\d{13})$", ErrorMessage = "El número de identificación debe tener 10 o 13 dígitos")]
     public string NumeroIdentificacion { get; set; } = string.Empty;
+
+    // Información personal
 
     [Required(ErrorMessage = "Los nombres son obligatorios")]
     [MaxLength(20, ErrorMessage = "Los nombres no pueden superar los 20 caracteres")]
@@ -21,6 +25,8 @@ public class DatosPersona
     [MaxLength(20, ErrorMessage = "Los apellidos no pueden superar los 20 caracteres")]
     public string Apellidos { get; set; } = string.Empty;
 
+    // Contacto
+
     [Required(ErrorMessage = "El correo es obligatorio")]
     [EmailAddress(ErrorMessage = "El correo no tiene un formato válido")]
     [MaxLength(30, ErrorMessage = "El correo no puede superar los 30 caracteres")]
@@ -29,6 +35,8 @@ public class DatosPersona
     [Required(ErrorMessage = "El teléfono es obligatorio")]
     [RegularExpression(@"^\d{10}$", ErrorMessage = "El teléfono debe tener exactamente 10 dígitos")]
     public string Telefono { get; set; } = string.Empty;
+
+    // Domicilio
 
     [Range(1, short.MaxValue, ErrorMessage = "Debe seleccionar un país")]
     public short PaisId { get; set; }
@@ -42,6 +50,8 @@ public class DatosPersona
     [Required(ErrorMessage = "La dirección es obligatoria")]
     [MaxLength(200, ErrorMessage = "La dirección no puede superar los 200 caracteres")]
     public string Direccion { get; set; } = string.Empty;
+
+    // Conversión a entidades
 
     public Persona CrearPersona()
     {

@@ -4,6 +4,8 @@ namespace Backend2.Dtos;
 
 public class PersonaRespuesta
 {
+    // Persona
+
     public int Id { get; set; }
     public string TipoIdentificacion { get; set; } = string.Empty;
     public string NumeroIdentificacion { get; set; } = string.Empty;
@@ -11,10 +13,15 @@ public class PersonaRespuesta
     public string? Apellidos { get; set; }
     public string? Email { get; set; }
     public string? Telefono { get; set; }
+
+    // Domicilio
+
     public short? PaisId { get; set; }
     public short? ProvinciaId { get; set; }
     public int? CantonId { get; set; }
     public string? Direccion { get; set; }
+
+    // Conversión a respuesta
 
     public static PersonaRespuesta Mapear(
         Persona persona,

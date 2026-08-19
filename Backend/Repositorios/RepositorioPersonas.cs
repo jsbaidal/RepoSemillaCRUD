@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using Backend2.Data;
 using Backend2.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend2.Repositorios;
 
@@ -13,7 +13,11 @@ public class RepositorioPersonas
         _db = db;
     }
 
-        public async Task<(List<Persona> Personas, int Total)> ObtenerPaginaAsync(int pagina, int tamanoPagina)
+    // Consultas
+
+    public async Task<(List<Persona> Personas, int Total)> ObtenerPaginaAsync(
+        int pagina,
+        int tamanoPagina)
     {
         var total = await _db.Personas
             .CountAsync(persona => persona.Estado == "A");
@@ -53,6 +57,8 @@ public class RepositorioPersonas
                 domicilio.PersonaId == personaId && domicilio.Estado == "A");
     }
 
+    // Validaciones
+
     public async Task<bool> IdentificacionExisteAsync(
         string numeroIdentificacion,
         int? personaIdExcluir = null)
@@ -61,7 +67,8 @@ public class RepositorioPersonas
             .AsNoTracking()
             .AnyAsync(persona =>
                 persona.NumeroIdentificacion == numeroIdentificacion &&
-                (!personaIdExcluir.HasValue || persona.Id != personaIdExcluir.Value));
+                (!personaIdExcluir.HasValue ||
+                 persona.Id != personaIdExcluir.Value));
     }
 
     public async Task<bool> UbicacionValidaAsync(
@@ -89,6 +96,8 @@ public class RepositorioPersonas
                 canton.PaisId == paisId &&
                 canton.Estado == "A");
     }
+
+    // Operaciones de escritura
 
     public async Task<Persona?> CrearAsync(
         Persona persona,

@@ -12,6 +12,7 @@ const limpiadores = {
 };
 
 const PersonaForm = ({ valores, onCambiar }) => {
+  // Valores derivados
   const tipoIdentificacion = valores.tipoIdentificacion ?? "CED";
   const longitudIdentificacion = tipoIdentificacion === "RUC" ? 13 : 10;
 
@@ -46,6 +47,8 @@ const PersonaForm = ({ valores, onCambiar }) => {
 
   return (
     <div className="space-y-4">
+      {/* Identificación */}
+
       <label className="form-control w-full">
         <span className="label-text mb-1">Tipo de identificación</span>
         <select
@@ -80,6 +83,8 @@ const PersonaForm = ({ valores, onCambiar }) => {
         />
       </label>
 
+      {/* Información personal */}
+
       <label className="input input-bordered flex items-center gap-2 w-full">
         <User className="size-4 text-base-content/40" />
         <input
@@ -107,6 +112,8 @@ const PersonaForm = ({ valores, onCambiar }) => {
           onChange={manejarCambio}
         />
       </label>
+
+      {/* Contacto */}
 
       <label className="input input-bordered flex items-center gap-2 w-full">
         <Mail className="size-4 text-base-content/40" />
@@ -138,89 +145,91 @@ const PersonaForm = ({ valores, onCambiar }) => {
         />
       </label>
 
+      {/* Domicilio */}
+
       <div className="space-y-4 border-t border-base-300 pt-4">
-          <h4 className="font-semibold text-primary">Lugar de domicilio</h4>
+        <h4 className="font-semibold text-primary">Lugar de domicilio</h4>
 
-          <label className="form-control w-full">
-            <span className="label-text mb-1">País</span>
-            <select
-              name="paisId"
-              className="select select-bordered w-full"
-              value={valores.paisId}
-              onChange={manejarCambio}
-              disabled={cargandoPaises}
-              required
-            >
-              <option value="">
-                {cargandoPaises ? "Cargando países..." : "Seleccione un país"}
+        <label className="form-control w-full">
+          <span className="label-text mb-1">País</span>
+          <select
+            name="paisId"
+            className="select select-bordered w-full"
+            value={valores.paisId}
+            onChange={manejarCambio}
+            disabled={cargandoPaises}
+            required
+          >
+            <option value="">
+              {cargandoPaises ? "Cargando países..." : "Seleccione un país"}
+            </option>
+            {paises.map((pais) => (
+              <option key={pais.id} value={pais.id}>
+                {pais.nombre}
               </option>
-              {paises.map((pais) => (
-                <option key={pais.id} value={pais.id}>
-                  {pais.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
+            ))}
+          </select>
+        </label>
 
-          <label className="form-control w-full">
-            <span className="label-text mb-1">Provincia</span>
-            <select
-              name="provinciaId"
-              className="select select-bordered w-full"
-              value={valores.provinciaId}
-              onChange={manejarCambio}
-              disabled={!valores.paisId || cargandoProvincias}
-              required
-            >
-              <option value="">
-                {cargandoProvincias
-                  ? "Cargando provincias..."
-                  : "Seleccione una provincia"}
+        <label className="form-control w-full">
+          <span className="label-text mb-1">Provincia</span>
+          <select
+            name="provinciaId"
+            className="select select-bordered w-full"
+            value={valores.provinciaId}
+            onChange={manejarCambio}
+            disabled={!valores.paisId || cargandoProvincias}
+            required
+          >
+            <option value="">
+              {cargandoProvincias
+                ? "Cargando provincias..."
+                : "Seleccione una provincia"}
+            </option>
+            {provincias.map((provincia) => (
+              <option key={provincia.id} value={provincia.id}>
+                {provincia.nombre}
               </option>
-              {provincias.map((provincia) => (
-                <option key={provincia.id} value={provincia.id}>
-                  {provincia.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
+            ))}
+          </select>
+        </label>
 
-          <label className="form-control w-full">
-            <span className="label-text mb-1">Cantón</span>
-            <select
-              name="cantonId"
-              className="select select-bordered w-full"
-              value={valores.cantonId}
-              onChange={manejarCambio}
-              disabled={!valores.provinciaId || cargandoCantones}
-              required
-            >
-              <option value="">
-                {cargandoCantones
-                  ? "Cargando cantones..."
-                  : "Seleccione un cantón"}
+        <label className="form-control w-full">
+          <span className="label-text mb-1">Cantón</span>
+          <select
+            name="cantonId"
+            className="select select-bordered w-full"
+            value={valores.cantonId}
+            onChange={manejarCambio}
+            disabled={!valores.provinciaId || cargandoCantones}
+            required
+          >
+            <option value="">
+              {cargandoCantones
+                ? "Cargando cantones..."
+                : "Seleccione un cantón"}
+            </option>
+            {cantones.map((canton) => (
+              <option key={canton.id} value={canton.id}>
+                {canton.nombre}
               </option>
-              {cantones.map((canton) => (
-                <option key={canton.id} value={canton.id}>
-                  {canton.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
+            ))}
+          </select>
+        </label>
 
-          <label className="form-control w-full">
-            <span className="label-text mb-1">Dirección</span>
-            <input
-              type="text"
-              name="direccion"
-              className="input input-bordered w-full"
-              placeholder="Ingrese la dirección del domicilio"
-              value={valores.direccion}
-              onChange={manejarCambio}
-              maxLength={200}
-              required
-            />
-          </label>
+        <label className="form-control w-full">
+          <span className="label-text mb-1">Dirección</span>
+          <input
+            type="text"
+            name="direccion"
+            className="input input-bordered w-full"
+            placeholder="Ingrese la dirección del domicilio"
+            value={valores.direccion}
+            onChange={manejarCambio}
+            maxLength={200}
+            required
+          />
+        </label>
       </div>
     </div>
   );

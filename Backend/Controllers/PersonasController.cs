@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using Backend2.Dtos;
-using Backend2.Models;
 using Backend2.Repositorios;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend2.Controllers;
 
@@ -15,6 +14,8 @@ public class PersonasController : ControllerBase
     {
         _repositorio = repositorio;
     }
+
+    // Consultas
 
     [HttpGet]
     public async Task<IActionResult> ObtenerPersonas(int pagina = 1, int tamanoPagina = 20)
@@ -46,6 +47,8 @@ public class PersonasController : ControllerBase
         return Ok(PersonaRespuesta.Mapear(persona, domicilio));
     }
 
+    // Operaciones
+
     [HttpPost]
     public async Task<IActionResult> CrearPersona(DatosPersona datos)
     {
@@ -73,7 +76,10 @@ public class PersonasController : ControllerBase
             });
         }
 
-        return CreatedAtAction(nameof(ObtenerPersonaPorId), new { id = creada.Id }, PersonaRespuesta.Mapear(creada));
+        return CreatedAtAction(
+            nameof(ObtenerPersonaPorId),
+            new { id = creada.Id },
+            PersonaRespuesta.Mapear(creada));
     }
 
     [HttpPut("{id}")]

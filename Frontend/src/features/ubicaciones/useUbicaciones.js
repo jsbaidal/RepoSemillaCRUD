@@ -7,13 +7,17 @@ import {
 } from "./ubicacionesApi";
 
 export function useUbicaciones(paisId, provinciaId) {
+  // Opciones disponibles
   const [paises, setPaises] = useState([]);
   const [provincias, setProvincias] = useState([]);
   const [cantones, setCantones] = useState([]);
 
+  // Estados de carga
   const [cargandoPaises, setCargandoPaises] = useState(false);
   const [cargandoProvincias, setCargandoProvincias] = useState(false);
   const [cargandoCantones, setCargandoCantones] = useState(false);
+
+  // Carga inicial de países
 
   useEffect(() => {
     const cargarPaises = async () => {
@@ -30,6 +34,8 @@ export function useUbicaciones(paisId, provinciaId) {
 
     cargarPaises();
   }, []);
+
+  // Provincias dependientes del país
 
   useEffect(() => {
     setProvincias([]);
@@ -51,6 +57,8 @@ export function useUbicaciones(paisId, provinciaId) {
 
     cargarProvincias();
   }, [paisId]);
+
+  // Cantones dependientes de la provincia
 
   useEffect(() => {
     setCantones([]);

@@ -34,10 +34,13 @@ const HomePage = () => {
     irAAnterior,
   } = usePersonas();
 
+  // Estado del formulario
   const [modalAbierto, setModalAbierto] = useState(null);
   const [valores, setValores] = useState(VACIO);
   const [guardando, setGuardando] = useState(false);
   const [errorFormulario, setErrorFormulario] = useState("");
+
+  // Apertura y cierre del modal
 
   const abrirCrear = () => {
     setErrorFormulario("");
@@ -67,10 +70,14 @@ const HomePage = () => {
 
   const cerrarModal = () => setModalAbierto(null);
 
+  // Actualización del formulario
+
   const cambiarValor = (campo, valor) => {
     setErrorFormulario("");
     setValores((prev) => ({ ...prev, [campo]: valor }));
   };
+
+  // Envío del formulario
 
   const enviar = async (e) => {
     e.preventDefault();
@@ -147,11 +154,13 @@ const HomePage = () => {
         )}
 
         <form onSubmit={enviar} className="space-y-4">
-          <PersonaForm
-            valores={valores}
-            onCambiar={cambiarValor}
-          />
-          <button type="submit" className="btn btn-primary w-full" disabled={guardando}>
+          <PersonaForm valores={valores} onCambiar={cambiarValor} />
+
+          <button
+            type="submit"
+            className="btn btn-primary w-full"
+            disabled={guardando}
+          >
             {guardando ? "Guardando..." : "Guardar"}
           </button>
         </form>

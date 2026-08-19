@@ -3,10 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend2.Models;
 
-[Table("TBL_PERSONA",Schema ="ESPOL")]
+[Table("TBL_PERSONA", Schema = "ESPOL")]
 public class Persona
 {
-    
     [Key]
     [Column("IDPERSONA")]
     public int Id { get; set; }

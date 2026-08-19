@@ -20,12 +20,15 @@ const mensajeDeError = (error, porDefecto) => {
 };
 
 export function usePersonas() {
+  // Datos del listado
   const [personas, setPersonas] = useState([]);
   const [total, setTotal] = useState(0);
   const [pagina, setPagina] = useState(1);
+
+  // Estado de carga
   const [cargando, setCargando] = useState(false);
 
-  const cargar = async (paginaACargar) => {
+  const cargarPersonas = async (paginaACargar) => {
     setCargando(true);
     try {
       const respuesta = await listarPersonas(paginaACargar, TAMANO_PAGINA);
@@ -40,8 +43,10 @@ export function usePersonas() {
   };
 
   useEffect(() => {
-    cargar(1);
+    cargarPersonas(1);
   }, []);
+
+  // Operaciones CRUD
 
   const obtener = async (id) => {
     try {
@@ -56,7 +61,7 @@ export function usePersonas() {
     try {
       await crearPersona(datos);
       toast.success("Persona creada");
-      await cargar(1);
+      await cargarPersonas(1);
     } catch (error) {
       throw new Error(
         mensajeDeError(error, "No se pudo crear la persona"),
@@ -68,7 +73,7 @@ export function usePersonas() {
     try {
       await editarPersona(id, datos);
       toast.success("Persona actualizada");
-      await cargar(pagina);
+      await cargarPersonas(pagina);
     } catch (error) {
       throw new Error(
         mensajeDeError(error, "No se pudo actualizar la persona"),
@@ -80,14 +85,16 @@ export function usePersonas() {
     try {
       await eliminarPersona(id);
       toast.success("Persona eliminada");
-      await cargar(pagina);
+      await cargarPersonas(pagina);
     } catch (error) {
       toast.error(mensajeDeError(error, "No se pudo eliminar la persona"));
     }
   };
 
-  const irASiguiente = () => cargar(pagina + 1);
-  const irAAnterior = () => cargar(pagina - 1);
+  // Paginación
+
+  const irASiguiente = () => cargarPersonas(pagina + 1);
+  const irAAnterior = () => cargarPersonas(pagina - 1);
 
   return {
     personas,

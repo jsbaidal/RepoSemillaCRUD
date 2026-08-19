@@ -14,16 +14,22 @@ public class UbicacionesController : ControllerBase
         _repositorio = repositorio;
     }
 
+    // Catálogos dependientes: país → provincia → cantón
+
     [HttpGet("paises")]
     public async Task<IActionResult> ObtenerPaises()
     {
-        return Ok(await _repositorio.ObtenerPaisesAsync());
+        var paises = await _repositorio.ObtenerPaisesAsync();
+
+        return Ok(paises);
     }
 
     [HttpGet("provincias")]
     public async Task<IActionResult> ObtenerProvincias(short paisId)
     {
-        return Ok(await _repositorio.ObtenerProvinciasAsync(paisId));
+        var provincias = await _repositorio.ObtenerProvinciasAsync(paisId);
+
+        return Ok(provincias);
     }
 
     [HttpGet("cantones")]
@@ -31,8 +37,10 @@ public class UbicacionesController : ControllerBase
         short paisId,
         short provinciaId)
     {
-        return Ok(await _repositorio.ObtenerCantonesAsync(
+        var cantones = await _repositorio.ObtenerCantonesAsync(
             paisId,
-            provinciaId));
+            provinciaId);
+
+        return Ok(cantones);
     }
 }

@@ -13,6 +13,8 @@ public class RepositorioUbicaciones
         _db = db;
     }
 
+    // Países
+
     public async Task<List<OpcionUbicacion>> ObtenerPaisesAsync()
     {
         return await _db.Paises
@@ -26,6 +28,8 @@ public class RepositorioUbicaciones
             })
             .ToListAsync();
     }
+
+    // Provincias del país seleccionado
 
     public async Task<List<OpcionUbicacion>> ObtenerProvinciasAsync(short paisId)
     {
@@ -42,6 +46,8 @@ public class RepositorioUbicaciones
             })
             .ToListAsync();
     }
+
+    // Cantones de la provincia seleccionada
 
     public async Task<List<OpcionUbicacion>> ObtenerCantonesAsync(
         short paisId,
